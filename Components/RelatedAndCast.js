@@ -1,4 +1,4 @@
-// TopRatedMovies.js
+// relatedAndCast.js
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -15,51 +15,48 @@ import { useNavigation } from "@react-navigation/native";
 
 const apiKey = "3be634f9be09af34cfd2298e2f2270bf";
 
-const MovieList = () => {
-  const [topRatedMovies, setTopRatedMovies] = useState([]);
-  const [popularMovies, setPopularMovies] = useState([]);
+const RelatedAndCast = ({ movieId }) => {
+  const [relatedMovies, setRelatedMovies] = useState([]);
+  const [casts, setCasts] = useState([]);
   const navigation = useNavigation();
 
   useEffect(() => {
-    const fetchTopRatedMovies = async () => {
+    const fetchRelatedMovies = async () => {
       try {
         const response = await axios.get(
-          `https://api.themoviedb.org/3/movie/top_rated?api_key=${apiKey}&language=en-US&page=1`
+          `https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=${apiKey}&language=en-US&page=1`
         );
-        setTopRatedMovies(response.data.results);
+        setRelatedMovies(response.data.results);
       } catch (error) {
-        console.error("Error fetching top rated movies:", error);
+        console.error("Error fetching related movies:", error);
       }
     };
 
-    const fetchPopularMovies = async () => {
+    const fetchMovieCredits = async () => {
       try {
         const response = await axios.get(
-          `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=1`
+          `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}`
         );
-        setPopularMovies(response.data.results);
+        setCasts(response.data.cast);
       } catch (error) {
-        console.error("Error fetching popular movies:", error);
+        console.error("Error fetching movie credits:", error);
       }
     };
 
-    fetchTopRatedMovies();
-    fetchPopularMovies();
-  }, []);
+    fetchRelatedMovies();
+    fetchMovieCredits();
+  }, [movieId]);
 
-  const handleMoviePress = (movieId) => {
-    // Navigate to MovieScreen component
-    navigation.navigate("MovieScreen", { movieId });
+  const handleMoviePress = (id) => {
+    navigation.navigate("MovieScreen", { movieId: id });
   };
 
-  const renderItem = ({ item, index }) => {
-    const itemWidth = Dimensions.get("window").width * 0.3;
-    const currentSlideStyle = {
-      width: itemWidth,
-    };
+  const top6Movies = relatedMovies.slice(0, 6);
+
+  const renderItem = ({ item }) => {
     return (
       <TouchableOpacity onPress={() => handleMoviePress(item.id)}>
-        <View style={[styles.movieContainer, currentSlideStyle]}>
+        <View style={styles.movieContainer}>
           <View style={styles.imageContainer}>
             <Image
               source={{
@@ -76,29 +73,30 @@ const MovieList = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.sectionTitle}>Top Rated</Text>
+      <Text style={styles.sectionTitle}>Casts</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {casts.map((cast) => (
+          <View key={cast.id} style={styles.castItem}>
+            <Image
+              source={{
+                uri: `https://image.tmdb.org/t/p/w500${cast.profile_path}`,
+              }}
+              style={styles.castImage}
+            />
+            <Text style={styles.castName}>{cast.name}</Text>
+          </View>
+        ))}
+      </ScrollView>
+      <Text style={styles.sectionTitle}>Related Movies</Text>
       <View style={styles.carouselContainer}>
         <Carousel
-          data={topRatedMovies}
+          data={top6Movies}
           renderItem={renderItem}
           sliderWidth={Dimensions.get("window").width}
           itemWidth={Dimensions.get("window").width * 0.3}
           layout="default"
           inactiveSlideScale={1}
-          inactiveSlideOpacity={0.6}
-          loop
-        />
-      </View>
-      <Text style={styles.sectionTitle}>Popular</Text>
-      <View style={styles.carouselContainer}>
-        <Carousel
-          data={popularMovies}
-          renderItem={renderItem}
-          sliderWidth={Dimensions.get("window").width}
-          itemWidth={Dimensions.get("window").width * 0.3}
-          layout="default"
-          inactiveSlideScale={1}
-          inactiveSlideOpacity={0.6}
+          inactiveSlideOpacity={1}
           loop
         />
       </View>
@@ -142,5 +140,23 @@ const styles = StyleSheet.create({
     color: "white",
     padding: 2,
   },
+  castItem: {
+    marginRight: 10,
+    alignItems: "center",
+  },
+  castImage: {
+    width: 100,
+    height: 150,
+    resizeMode: "cover",
+    borderRadius: 10,
+    marginBottom: 5,
+    marginTop: 10,
+  },
+  castName: {
+    color: "white",
+    textAlign: "center",
+    marginBottom: 20,
+  },
 });
-export default MovieList;
+
+export default RelatedAndCast;

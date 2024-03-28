@@ -10,11 +10,13 @@ import {
 } from "react-native";
 import Carousel from "react-native-snap-carousel";
 import axios from "axios";
+import { useNavigation } from "@react-navigation/native";
 
 const apiKey = "3be634f9be09af34cfd2298e2f2270bf";
 
 const TrendingMovies = () => {
   const [trendingMovies, setTrendingMovies] = useState([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchTrendingMovies = async () => {
@@ -31,13 +33,21 @@ const TrendingMovies = () => {
     fetchTrendingMovies();
   }, []);
 
+  const handleMoviePress = (movieId) => {
+    // Navigate to MovieScreen component
+    navigation.navigate("MovieScreen", { movieId });
+  };
+
   const renderItem = ({ item, index }) => {
     const itemWidth = Dimensions.get("window").width * 0.6;
     const currentSlideStyle = {
       width: itemWidth,
     };
     return (
-      <TouchableOpacity style={[styles.movieContainer, currentSlideStyle]}>
+      <TouchableOpacity
+        style={[styles.movieContainer, currentSlideStyle]}
+        onPress={() => handleMoviePress(item.id)}
+      >
         <View style={styles.imageContainer}>
           <Image
             source={{
@@ -73,13 +83,14 @@ const TrendingMovies = () => {
 const styles = StyleSheet.create({
   container: {
     marginTop: 20,
+    backgroundColor: "rgb(14, 2, 33)",
   },
   sectionTitle: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
     color: "white",
-    marginLeft: 125, // Align section title to the left
+    marginLeft: 20,
   },
   carouselContainer: {
     alignItems: "center",
@@ -93,13 +104,14 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   poster: {
-    width: 280,
+    width: 220,
     height: 300,
     marginBottom: 10,
-    objectFit: "contain",
+    resizeMode: "cover",
+    borderRadius: 10,
   },
   title: {
-    fontSize: 16,
+    fontSize: 17,
     textAlign: "center",
     color: "white",
   },

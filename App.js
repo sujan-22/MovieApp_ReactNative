@@ -2,21 +2,27 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import HomeScreen from "./Components/HomeScreen";
 import MovieSearch from "./Components/MovieSearch";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import MovieScreen from "./Components/MovieScreen";
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <HomeScreen />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="HomeScreen"
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MovieScreen"
+          component={MovieScreen}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "rgb(14, 2, 33)",
-    alignItems: "center",
-    color: "white",
-    paddingTop: 33,
-  },
-});

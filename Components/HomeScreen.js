@@ -5,9 +5,10 @@ import { Feather } from "@expo/vector-icons";
 import TrendingMovies from "./TrendingMovies";
 import MovieList from "./MovieList";
 
-const HomeScreen = () => {
+const HomeScreen = (props) => {
+  console.log(props);
   return (
-    <View>
+    <ScrollView style={styles.container}>
       <View style={styles.navbar}>
         <View style={styles.iconContainer}>
           <FontAwesome6 name="bars-staggered" size={24} color="white" />
@@ -17,27 +18,37 @@ const HomeScreen = () => {
           <Feather name="search" size={24} color="white" />
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollViewContent}
+      >
         <TrendingMovies />
         <MovieList />
       </ScrollView>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollViewContent: {
+    flexGrow: 1,
+  },
+  container: {
+    backgroundColor: "rgb(14, 2, 33)",
+    flexGrow: 1,
+  },
   navbar: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "rgb(14, 2, 33)", // Add background color
-    paddingHorizontal: 20,
+    backgroundColor: "rgb(14, 2, 33)",
+    paddingHorizontal: 10,
     height: 60,
     color: "White",
-    borderBottomColor: "lightgray", // Add border color
+    marginTop: 50,
   },
   iconContainer: {
-    width: 240,
+    width: 100,
     height: 40,
     justifyContent: "center",
     alignItems: "center",
