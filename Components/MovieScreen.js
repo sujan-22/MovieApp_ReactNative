@@ -18,14 +18,22 @@ const apiKey = "3be634f9be09af34cfd2298e2f2270bf";
 const MovieScreen = ({ route, navigation }) => {
   const { movieId } = route.params;
   const [movieDetails, setMovieDetails] = useState(null);
+  const [movieReviews, setMovieReviews] = useState([]);
+  const [showAllReviews, setShowAllReviews] = useState(false);
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
       try {
-        const response = await axios.get(
-          `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&language=en-US`
-        );
-        setMovieDetails(response.data);
+        const [detailsResponse, reviewsResponse] = await Promise.all([
+          axios.get(
+            `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&language=en-US`
+          ),
+          axios.get(
+            `https://api.themoviedb.org/3/movie/${movieId}/reviews?api_key=${apiKey}&language=en-US&page=1`
+          ),
+        ]);
+        setMovieDetails(detailsResponse.data);
+        setMovieReviews(reviewsResponse.data.results);
       } catch (error) {
         console.error("Error fetching movie details:", error);
       }
@@ -44,6 +52,10 @@ const MovieScreen = ({ route, navigation }) => {
   }min`;
   const genres = movieDetails.genres.map((genre) => genre.name).join(" • ");
 
+  const toggleShowAllReviews = () => {
+    setShowAllReviews((prevShowAllReviews) => !prevShowAllReviews);
+  };
+
   return (
     <ScrollView
       contentContainerStyle={styles.container}
@@ -51,9 +63,14 @@ const MovieScreen = ({ route, navigation }) => {
     >
       <View style={styles.iconContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Feather name="arrow-left" size={24} color="white" />
+          <Feather
+            name="arrow-left"
+            size={24}
+            color="white"
+            style={styles.icon}
+          />
         </TouchableOpacity>
-        <Feather name="heart" size={24} color="white" />
+        <Feather name="heart" size={24} color="white" style={styles.icon} />
       </View>
       <Image
         source={{
@@ -70,7 +87,31 @@ const MovieScreen = ({ route, navigation }) => {
         {releaseYear} • {movieLength}
       </Text>
       <Text style={styles.info}>{genres}</Text>
+      <Text style={styles.rating}>
+        Rating: {movieDetails.vote_average}/10 ({movieDetails.vote_count} votes)
+      </Text>
       <Text style={styles.description}>{movieDetails.overview}</Text>
+      <View style={styles.reviewsContainer}>
+        <Text style={styles.reviewsTitle}>Reviews</Text>
+        {showAllReviews
+          ? movieReviews.map((review) => (
+              <View key={review.id} style={styles.reviewItem}>
+                <Text style={styles.reviewAuthor}>{review.author}</Text>
+                <Text style={styles.reviewContent}>{review.content}</Text>
+              </View>
+            ))
+          : movieReviews.slice(0, 1).map((review) => (
+              <View key={review.id} style={styles.reviewItem}>
+                <Text style={styles.reviewAuthor}>{review.author}</Text>
+                <Text style={styles.reviewContent}>{review.content}</Text>
+              </View>
+            ))}
+        <TouchableOpacity onPress={toggleShowAllReviews}>
+          <Text style={styles.seeMore}>
+            {showAllReviews ? "See Less" : "See More"}
+          </Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.castsContainer}>
         <RelatedAndCast movieId={movieId} />
       </View>
@@ -86,7 +127,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(14, 2, 33)",
     flexGrow: 1,
     position: "relative",
-    padding: 5,
+    padding: 20,
     paddingTop: 0,
   },
   iconContainer: {
@@ -124,6 +165,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 10,
   },
+  rating: {
+    fontSize: 16,
+    color: "white",
+    textAlign: "center",
+    marginBottom: 10,
+  },
   description: {
     fontSize: 16,
     color: "white",
@@ -131,64 +178,40 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
+  reviewsContainer: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  reviewsTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "white",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  reviewItem: {
+    marginBottom: 20,
+  },
+  reviewAuthor: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#00BFFF",
+    marginBottom: 5,
+  },
+  reviewContent: {
+    fontSize: 16,
+    color: "white",
+    lineHeight: 22,
+  },
+  seeMore: {
+    fontSize: 16,
+    color: "#00BFFF",
+    textAlign: "center",
+    marginTop: 10,
+  },
   castsContainer: {
     marginTop: 20,
     marginBottom: 20,
-  },
-  castsTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
-    marginBottom: 10,
-    marginLeft: 5,
-  },
-  castItem: {
-    marginRight: 10,
-    alignItems: "center",
-  },
-  castImage: {
-    width: 100,
-    height: 150,
-    resizeMode: "cover",
-    borderRadius: 10,
-    marginBottom: 5,
-  },
-  castName: {
-    color: "white",
-    textAlign: "center",
-  },
-  moreCasts: {
-    color: "white",
-    textAlign: "center",
-    top: 65,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  relatedMoviesContainer: {
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  relatedMoviesTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
-    marginBottom: 10,
-    marginLeft: 5,
-  },
-  relatedMovieItem: {
-    marginRight: 10,
-    alignItems: "center",
-  },
-  relatedMovieImage: {
-    width: 100,
-    height: 150,
-    resizeMode: "cover",
-    borderRadius: 10,
-    marginBottom: 5,
-  },
-  relatedMovieTitle: {
-    color: "white",
-    textAlign: "center",
   },
 });
 

@@ -15,6 +15,7 @@
     "@react-navigation/stack": "^6.3.29",
     "axios": "^1.6.8",
     "expo": "~50.0.14",
+    "expo-linear-gradient": "~12.7.2",
     "expo-status-bar": "~1.11.1",
     "react": "18.2.0",
     "react-native": "0.73.6",
@@ -25,8 +26,7 @@
     "react-native-screens": "~3.29.0",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-svg": "^15.1.0",
-    "undefined": "\\",
-    "expo-linear-gradient": "~12.7.2"
+    "undefined": "\\"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

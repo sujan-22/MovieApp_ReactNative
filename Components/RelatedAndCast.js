@@ -52,54 +52,52 @@ const RelatedAndCast = ({ movieId }) => {
   };
 
   const top6Movies = relatedMovies.slice(0, 6);
+  const top6Cast = casts.slice(0, 6);
 
-  const renderItem = ({ item }) => {
-    return (
-      <TouchableOpacity onPress={() => handleMoviePress(item.id)}>
-        <View style={styles.movieContainer}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={{
-                uri: `https://image.tmdb.org/t/p/w500${item.poster_path}`,
-              }}
-              style={styles.poster}
-            />
-          </View>
-          <Text style={styles.title}>{item.title}</Text>
+  const handleClick = (castId) => {
+    navigation.navigate("CastScreen", { castId: castId });
+  };
+
+  const renderRelatedMovies = () => {
+    return top6Movies.map((movie) => (
+      <TouchableOpacity
+        key={movie.id}
+        onPress={() => handleMoviePress(movie.id)}
+      >
+        <View style={styles.movieItem}>
+          <Image
+            source={{
+              uri: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+            }}
+            style={styles.movieImage}
+          />
+          <Text style={styles.movieTitle}>{movie.title}</Text>
         </View>
       </TouchableOpacity>
-    );
+    ));
   };
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.sectionTitle}>Casts</Text>
+      <Text style={styles.sectionTitle}>Top Casts</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {casts.map((cast) => (
-          <View key={cast.id} style={styles.castItem}>
-            <Image
-              source={{
-                uri: `https://image.tmdb.org/t/p/w500${cast.profile_path}`,
-              }}
-              style={styles.castImage}
-            />
-            <Text style={styles.castName}>{cast.name}</Text>
-          </View>
+        {top6Cast.map((cast) => (
+          <TouchableOpacity key={cast.id} onPress={() => handleClick(cast.id)}>
+            <View style={styles.castItem}>
+              <Image
+                source={{
+                  uri: `https://image.tmdb.org/t/p/w500${cast.profile_path}`,
+                }}
+                style={styles.castImage}
+              />
+              <Text style={styles.castName}>{cast.name}</Text>
+            </View>
+          </TouchableOpacity>
         ))}
+        <Text style={styles.moreCast}>+ {casts.length - 6} More</Text>
       </ScrollView>
       <Text style={styles.sectionTitle}>Related Movies</Text>
-      <View style={styles.carouselContainer}>
-        <Carousel
-          data={top6Movies}
-          renderItem={renderItem}
-          sliderWidth={Dimensions.get("window").width}
-          itemWidth={Dimensions.get("window").width * 0.3}
-          layout="default"
-          inactiveSlideScale={1}
-          inactiveSlideOpacity={1}
-          loop
-        />
-      </View>
+      <View style={styles.moviesContainer}>{renderRelatedMovies()}</View>
     </ScrollView>
   );
 };
@@ -113,35 +111,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: "white",
-    marginLeft: 20,
-  },
-  carouselContainer: {
-    alignItems: "center",
-  },
-  movieContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  imageContainer: {
-    borderRadius: 10,
-    overflow: "hidden",
-  },
-  poster: {
-    width: 105,
-    height: 150,
-    marginTop: 10,
-    marginBottom: 2,
-    resizeMode: "cover",
-    borderRadius: 10,
-  },
-  title: {
-    fontSize: 14,
-    textAlign: "center",
-    color: "white",
-    padding: 2,
+    marginBottom: 10,
   },
   castItem: {
     marginRight: 10,
+    width: 100,
     alignItems: "center",
   },
   castImage: {
@@ -150,13 +124,36 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     borderRadius: 10,
     marginBottom: 5,
-    marginTop: 10,
+  },
+  moreCast: {
+    color: "white",
+    textAlign: "center",
+    margin: 10,
+    top: 65,
   },
   castName: {
     color: "white",
     textAlign: "center",
     marginBottom: 20,
   },
+  moviesContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  movieItem: {
+    width: 100,
+    marginBottom: 20,
+  },
+  movieImage: {
+    width: "100%",
+    height: 150,
+    borderRadius: 10,
+    marginBottom: 5,
+  },
+  movieTitle: {
+    color: "white",
+    textAlign: "center",
+  },
 });
-
 export default RelatedAndCast;

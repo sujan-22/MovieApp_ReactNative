@@ -108,14 +108,13 @@ const MovieList = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    padding: 20,
     flexGrow: 1,
   },
   sectionTitle: {
     fontSize: 24,
     fontWeight: "bold",
     color: "white",
-    marginLeft: 20,
   },
   carouselContainer: {
     alignItems: "center",

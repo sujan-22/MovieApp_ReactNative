@@ -7,8 +7,9 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
-import Carousel from "react-native-snap-carousel";
+import Carousel, { Pagination } from "react-native-snap-carousel";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 
@@ -16,6 +17,7 @@ const apiKey = "3be634f9be09af34cfd2298e2f2270bf";
 
 const TrendingMovies = () => {
   const [trendingMovies, setTrendingMovies] = useState([]);
+  const [activeSlide, setActiveSlide] = useState(0);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -34,12 +36,11 @@ const TrendingMovies = () => {
   }, []);
 
   const handleMoviePress = (movieId) => {
-    // Navigate to MovieScreen component
     navigation.navigate("MovieScreen", { movieId });
   };
 
   const renderItem = ({ item, index }) => {
-    const itemWidth = Dimensions.get("window").width * 0.6;
+    const itemWidth = Dimensions.get("window").width;
     const currentSlideStyle = {
       width: itemWidth,
     };
@@ -61,6 +62,17 @@ const TrendingMovies = () => {
     );
   };
 
+  const paginationDots = trendingMovies.map((_, index) => (
+    <TouchableOpacity
+      key={index}
+      onPress={() => {
+        carouselRef.snapToItem(index);
+        setActiveSlide(index);
+      }}
+      style={[styles.dot, index === activeSlide && styles.activeDot]}
+    />
+  ));
+
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Trending</Text>
@@ -69,12 +81,17 @@ const TrendingMovies = () => {
           data={trendingMovies}
           renderItem={renderItem}
           sliderWidth={Dimensions.get("window").width}
-          itemWidth={Dimensions.get("window").width * 0.6}
+          itemWidth={Dimensions.get("window").width}
           layout="default"
           inactiveSlideScale={1}
           inactiveSlideOpacity={0.3}
           loop
+          onSnapToItem={(index) => setActiveSlide(index)}
+          ref={(c) => (carouselRef = c)}
         />
+        <ScrollView horizontal style={styles.paginationContainer}>
+          {paginationDots}
+        </ScrollView>
       </View>
     </View>
   );
@@ -82,7 +99,7 @@ const TrendingMovies = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    padding: 20,
     backgroundColor: "rgb(14, 2, 33)",
   },
   sectionTitle: {
@@ -90,7 +107,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
     color: "white",
-    marginLeft: 20,
   },
   carouselContainer: {
     alignItems: "center",
@@ -104,8 +120,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   poster: {
-    width: 220,
-    height: 300,
+    width: 320,
+    height: 470,
     marginBottom: 10,
     resizeMode: "cover",
     borderRadius: 10,
@@ -114,6 +130,21 @@ const styles = StyleSheet.create({
     fontSize: 17,
     textAlign: "center",
     color: "white",
+  },
+  paginationContainer: {
+    marginTop: 10,
+  },
+  dot: {
+    width: 5,
+    height: 5,
+    borderRadius: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    marginHorizontal: 4,
+  },
+  activeDot: {
+    backgroundColor: "rgba(255, 255, 255, 1)",
+    width: 6,
+    height: 6,
   },
 });
 

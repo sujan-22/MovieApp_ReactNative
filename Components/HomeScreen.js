@@ -1,22 +1,36 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import { useState, useEffect } from "react";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import TrendingMovies from "./TrendingMovies";
 import MovieList from "./MovieList";
 
-const HomeScreen = (props) => {
-  console.log(props);
+import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const HomeScreen = () => {
+  const navigation = useNavigation();
+
+  const handleSearchPress = () => {
+    navigation.navigate("MovieSearch");
+  };
+
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.navbar}>
-        <View style={styles.iconContainer}>
-          <FontAwesome6 name="bars-staggered" size={24} color="white" />
-        </View>
-        <Text style={styles.title}>Movies</Text>
-        <View style={styles.iconContainer}>
-          <Feather name="search" size={24} color="white" />
-        </View>
+        <Text style={styles.title}>
+          Movies
+          <MaterialCommunityIcons name="popcorn" size={24} color="white" />
+        </Text>
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -25,7 +39,18 @@ const HomeScreen = (props) => {
         <TrendingMovies />
         <MovieList />
       </ScrollView>
-    </ScrollView>
+      <View style={styles.bottomDock}>
+        <TouchableOpacity style={styles.iconContainer}>
+          <FontAwesome6 name="bars-staggered" size={24} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.iconContainer}
+          onPress={handleSearchPress}
+        >
+          <Feather name="search" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -35,23 +60,22 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: "rgb(14, 2, 33)",
-    flexGrow: 1,
+    padding: 10,
+    flex: 1,
   },
   navbar: {
-    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
     backgroundColor: "rgb(14, 2, 33)",
-    paddingHorizontal: 10,
-    height: 60,
-    color: "White",
-    marginTop: 50,
+    height: 30,
+    top: 0,
+    marginBottom: 10,
   },
-  iconContainer: {
-    width: 100,
-    height: 40,
-    justifyContent: "center",
+  bottomDock: {
+    flexDirection: "row",
+    justifyContent: "space-around",
     alignItems: "center",
+    height: 40, // Adjust as needed
+    backgroundColor: "rgb(14, 2, 33)",
   },
   title: {
     fontSize: 24,
