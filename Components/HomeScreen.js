@@ -5,10 +5,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
 } from "react-native";
-import { useState, useEffect } from "react";
-import { FontAwesome6 } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import TrendingMovies from "./TrendingMovies";
@@ -22,6 +20,10 @@ const HomeScreen = () => {
 
   const handleSearchPress = () => {
     navigation.navigate("MovieSearch");
+  };
+
+  const handleUpcomingPress = () => {
+    navigation.navigate("UpComing");
   };
 
   return (
@@ -40,13 +42,15 @@ const HomeScreen = () => {
         <MovieList />
       </ScrollView>
       <View style={styles.bottomDock}>
-        <TouchableOpacity style={styles.iconContainer}>
-          <FontAwesome6 name="bars-staggered" size={24} color="white" />
+        <TouchableOpacity>
+          <MaterialIcons
+            name="upcoming"
+            size={24}
+            color="white"
+            onPress={handleUpcomingPress}
+          />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconContainer}
-          onPress={handleSearchPress}
-        >
+        <TouchableOpacity onPress={handleSearchPress}>
           <Feather name="search" size={24} color="white" />
         </TouchableOpacity>
       </View>

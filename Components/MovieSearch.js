@@ -1,10 +1,7 @@
-// components/MovieSearch.js
-
 import React, { useState } from "react";
 import {
   View,
   TextInput,
-  Button,
   Text,
   Image,
   StyleSheet,
@@ -40,6 +37,7 @@ const MovieSearch = ({ navigation }) => {
   const handleMoviePress = (id) => {
     navigation.navigate("MovieScreen", { movieId: id });
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.navbar}>
@@ -62,34 +60,34 @@ const MovieSearch = ({ navigation }) => {
           onChangeText={searchMovies}
           value={query}
         />
-        <Button title="Reset" onPress={resetSearch} />
+        {query !== "" && (
+          <TouchableOpacity onPress={resetSearch} style={styles.iconContainer}>
+            <Feather name="x" size={24} color="white" />
+          </TouchableOpacity>
+        )}
       </View>
-      <View style={{ flex: 1 }}>
-        <ScrollView
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-          horizontal={false}
-        >
-          {movies.map((movie) => (
-            <TouchableOpacity
-              key={movie.id}
-              onPress={() => handleMoviePress(movie.id)}
-            >
-              <View style={styles.movieContainer}>
-                <Image
-                  source={{
-                    uri: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
-                  }}
-                  style={styles.poster}
-                />
-                <Text style={styles.title}>{movie.title}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-
-      <View style={styles.buttonContainer}></View>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        horizontal={false}
+      >
+        {movies.map((movie) => (
+          <TouchableOpacity
+            key={movie.id}
+            onPress={() => handleMoviePress(movie.id)}
+          >
+            <View style={styles.movieContainer}>
+              <Image
+                source={{
+                  uri: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+                }}
+                style={styles.poster}
+              />
+              <Text style={styles.title}>{movie.title}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
     </View>
   );
 };
@@ -103,15 +101,17 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   title: {
-    fontSize: 24,
+    fontSize: 18,
+    fontWeight: "bold",
     color: "white",
+    width: 240,
   },
   navbar: {
     flexDirection: "row",
     width: "100%",
     height: 70,
     alignItems: "center",
-    justifyContent: "space-between", // Align items to the ends
+    justifyContent: "space-between",
     marginBottom: 10,
   },
   navTitle: {
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
-    width: "80%",
+    width: "70%",
     paddingHorizontal: 10,
   },
   input: {
@@ -140,29 +140,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     color: "white",
   },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "80%",
-    marginBottom: 10,
+  iconContainer: {
+    position: "absolute",
+    right: 10,
+    top: 8,
+    paddingHorizontal: 10,
   },
-  flatList: {
+  scrollView: {
     flex: 1,
     width: "100%",
   },
   movieContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
+    padding: 10,
   },
   poster: {
     width: 100,
     height: 150,
     marginRight: 10,
-  },
-  title: {
-    fontSize: 16,
-    color: "white", // Set text color to white
+    resizeMode: "cover",
+    borderRadius: 10,
+    marginBottom: 5,
   },
 });
 
